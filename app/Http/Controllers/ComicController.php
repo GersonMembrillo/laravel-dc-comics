@@ -25,7 +25,7 @@ class ComicController extends Controller
      */
     public function create()
     {
-        //
+        return view('comics.create');
     }
 
     /**
@@ -36,7 +36,27 @@ class ComicController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // dd($request->all());
+        $form_data = $request->all();
+
+        // preso dal seeder
+        $newComic = new Comic();
+        // $newComic->title = $form_data['title'];
+        // $newComic->description = $form_data['description'];
+        // $newComic->image = $form_data['image'];
+        // $newComic->price = $form_data['price'];
+        // $newComic->series = $form_data['series'];
+        // $newComic->sale_date = $form_data['sale_date'];
+        // $newComic->type = $form_data['type'];
+
+        // Alternativa:
+        $newComic->fill($form_data);
+        // se qua usi fill() nel controller usare
+        // protected $fillable = [''];
+
+        $newComic->save();
+
+        return redirect()->route('comics.show', $newComic->id);
     }
 
     /**
@@ -56,9 +76,9 @@ class ComicController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Comic $comic)
     {
-        //
+        return view('comics.edit', compact('comic'));
     }
 
     /**
@@ -68,9 +88,13 @@ class ComicController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Comic $comic)
     {
-        //
+        $form_data = $request->all();
+        // dd($form_data);
+        // $comic = Comic::findOrFail($id);
+        $comic->update($form_data);
+        return redirect()->route('comics.show', $comic->id);
     }
 
     /**
@@ -79,8 +103,10 @@ class ComicController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Comic $comic)
     {
-        //
+        //$comic = Comic::find($id);
+        $comic->delete();
+        return redirect()->route('comics.index')->with('message', "Comics with id: {$comic->id} cancellato con successo!");
     }
 }
